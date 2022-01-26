@@ -1,13 +1,15 @@
 package com.omnia.nn.read.txt.file;
 
 public class NnRecord {
-    String dataZlecenia;
-    String dataWyceny;
-    String nazwaFunduszu;
-    String typTransakcji;
-    String status;
-    String kwota;
-    String wartoscRejestru;
+    private String dataZlecenia;
+    private String dataWyceny;
+    private String nazwaFunduszu;
+    private String typTransakcji;
+    private String status;
+    private String kwota;
+    private String KwotaJednostka;
+    private String wartoscRejestru;
+    private String wartoscRejestruJednostka;
 
     public String getDataZlecenia() {
         return dataZlecenia;
@@ -57,11 +59,27 @@ public class NnRecord {
         this.kwota = kwota;
     }
 
+    public String getKwotaJednostka() {
+        return KwotaJednostka;
+    }
+
+    public void setKwotaJednostka(String kwotaJednostka) {
+        KwotaJednostka = kwotaJednostka;
+    }
+
     public String getWartoscRejestru() {
         return wartoscRejestru;
     }
 
     public void setWartoscRejestru(String wartoscRejestru) {
         this.wartoscRejestru = wartoscRejestru;
+    }
+
+    public String getWartoscRejestruJednostka() {
+        return wartoscRejestruJednostka;
+    }
+
+    public void setWartoscRejestruJednostka(String wartoscRejestruJednostka) {
+        this.wartoscRejestruJednostka = wartoscRejestruJednostka;
     }
 }

@@ -14,7 +14,7 @@ import org.apache.commons.lang3.StringUtils;
 
 public class ReadFileLineByLineUsingBufferedReader {
 
-    private static final String FILE_HEADER ="Data zlecenia\tData wyceny\tNazwa funduszu\tTyp transakcji\tStatus\tKwota\tWartosc po transakcji\n";
+    private static final String FILE_HEADER ="Data zlecenia\tData wyceny\tNazwa funduszu\tTyp transakcji\tStatus\tKwota\tWartosc po transakcji";
     private static final String TAB_DELIMITER = "\t";
     private static final String NEW_LINE_SEPARATOR = "\n";
 
@@ -25,8 +25,8 @@ public class ReadFileLineByLineUsingBufferedReader {
 
     public static void main(String[] args) {
         ReadFileLineByLineUsingBufferedReader reader = new ReadFileLineByLineUsingBufferedReader();
-        reader.redFil(reader.fileNameA);
-        reader.redFil(reader.fileNameB);
+        reader.redFile(reader.fileNameA);
+        reader.redFile(reader.fileNameB);
         reader.writeToTsv(reader.outputFileName);
     }
 
@@ -51,7 +51,11 @@ public class ReadFileLineByLineUsingBufferedReader {
                 sb.append(TAB_DELIMITER);
                 sb.append(nnRecord.getKwota());
                 sb.append(TAB_DELIMITER);
+                sb.append(nnRecord.getKwotaJednostka());
+                sb.append(TAB_DELIMITER);
                 sb.append(nnRecord.getWartoscRejestru());
+                sb.append(TAB_DELIMITER);
+                sb.append(nnRecord.getWartoscRejestruJednostka());
                 sb.append(NEW_LINE_SEPARATOR);
                 try {
                     fw.append(sb.toString());
@@ -67,9 +71,9 @@ public class ReadFileLineByLineUsingBufferedReader {
         }
     }
 
-    public void redFil(String fileName) {
+    public void redFile(String fileName) {
         BufferedReader reader;
-        Pattern datePattern = Pattern.compile("\\d+");
+        Pattern numberPattern = Pattern.compile("\\d+");
         boolean started = false;
         NnRecord nnRecord = new NnRecord();
         try {
@@ -82,7 +86,7 @@ public class ReadFileLineByLineUsingBufferedReader {
                     }
                 } else {
                     if (line.indexOf("break-date") > 0) {
-                        Matcher dateMatcher = datePattern.matcher(line);
+                        Matcher dateMatcher = numberPattern.matcher(line);
                         List<String> dtLs = new ArrayList(3);
                         while (dateMatcher.find()) {
                             dtLs.add(dateMatcher.group());
@@ -104,10 +108,18 @@ public class ReadFileLineByLineUsingBufferedReader {
                         nnRecord.setStatus(status);
                     } else if (line.indexOf("value margin-xs text-center text-right-xs") > 0) {
                         String kwota = StringUtils.substringBetween(line, "</span>", "</p>");
-                        nnRecord.setKwota(kwota);
+                        kwota = kwota.replaceAll("&nbsp;","");
+                        kwota = kwota.replaceAll(",",".");
+                        int space = kwota.indexOf(" ");
+                        nnRecord.setKwota(kwota.substring(0,space));
+                        nnRecord.setKwotaJednostka(kwota.substring(space+1));
                     } else if (line.indexOf("registry-value") > 0) {
                         String kwota = StringUtils.substringBetween(line, ">", "<");
-                        nnRecord.setWartoscRejestru(kwota);
+                        kwota = kwota.replaceAll("&nbsp;","");
+                        kwota = kwota.replaceAll(",",".");
+                        int space = kwota.indexOf(" ");
+                        nnRecord.setWartoscRejestru(kwota.substring(0, space));
+                        nnRecord.setWartoscRejestruJednostka(kwota.substring(space+1));
                         transactions.add(nnRecord);
                         nnRecord = new NnRecord();
                     }
