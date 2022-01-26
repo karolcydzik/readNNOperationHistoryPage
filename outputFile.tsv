@@ -1,4 +1,4 @@
-Data zlecenia	Data wyceny	Nazwa funduszu	Typ transakcji	Status	Kwota	Wartosc po transakcji
+Data zlecenia	Data wyceny	Nazwa funduszu	Typ transakcji	Status	Kwota	Kwota jednostka	Wartosc po transakcji	Wpt jednostka
 2019-11-25	2019-12-10	NN (L) Globalny Spółek Dywidendowych	nabycie	zrealizowana	60.00	PLN	60.00	PLN
 2019-11-25	2019-12-10	NN (L) Globalny Długu Korporacyjnego	nabycie	zrealizowana	150.00	PLN	150.00	PLN
 2019-11-25	2019-12-10	NN Stabilnego Wzrostu	nabycie	zrealizowana	90.00	PLN	90.00	PLN

@@ -14,7 +14,7 @@ import org.apache.commons.lang3.StringUtils;
 
 public class ReadFileLineByLineUsingBufferedReader {
 
-    private static final String FILE_HEADER ="Data zlecenia\tData wyceny\tNazwa funduszu\tTyp transakcji\tStatus\tKwota\tWartosc po transakcji";
+    private static final String FILE_HEADER ="Data zlecenia\tData wyceny\tNazwa funduszu\tTyp transakcji\tStatus\tKwota\tKwota jednostka\tWartosc po transakcji\tWpt jednostka";
     private static final String TAB_DELIMITER = "\t";
     private static final String NEW_LINE_SEPARATOR = "\n";
 
