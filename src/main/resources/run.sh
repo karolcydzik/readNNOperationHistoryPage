@@ -1,0 +1,1 @@
+java -jar readNNOperationHistoryPage-1.0-SNAPSHOT-jar-with-dependencies.jar ./NNTFI24A.html ./NNTFI24B.html
