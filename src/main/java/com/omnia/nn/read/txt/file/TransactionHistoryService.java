@@ -1,9 +1,6 @@
 package com.omnia.nn.read.txt.file;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -12,40 +9,37 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 
-public class ReadFileLineByLineUsingBufferedReader {
+public class TransactionHistoryService {
 
     private static final String FILE_HEADER ="Data zlecenia\tData wyceny\tNazwa funduszu\tTyp transakcji\tStatus\tKwota\tKwota jednostka\tWartosc po transakcji\tWpt jednostka";
     private static final String TAB_DELIMITER = "\t";
     private static final String NEW_LINE_SEPARATOR = "\n";
+    private static final String TRANSACTIONS_HISTORY_PATH = "/home/karolcydzik/IdeaProjects/readNNOperationHistoryPage/src/main/resources/transactionsHistory";
 
-    private List<NnRecord> transactions = new ArrayList<>();
     private String fileNameA = "/home/karolcydzik/IdeaProjects/readNNOperationHistoryPage/src/main/resources/NNTFI24A.html";
     private String fileNameB = "/home/karolcydzik/IdeaProjects/readNNOperationHistoryPage/src/main/resources/NNTFI24B.html";
-    private String outputFileName = "outputFile.tsv";
+    private String outputFileName = "results/outputFile.tsv";
 
-    public static void main(String[] args) {
-        String currentPath = Paths.get(".").toAbsolutePath().normalize().toString();
-        if(args.length<2){
-            System.out.print("Parameters are required. Please add files names\n");
-            return;
+    private List<NnRecord> transactions = new ArrayList<>();
+
+    private List<File> redaTransactionHistoryFileList() throws IOException {
+        List<File> filesInFolder = Files.walk(Paths.get(TRANSACTIONS_HISTORY_PATH))
+                .filter(Files::isRegularFile)
+                .map(Path::toFile)
+                .collect(Collectors.toList());
+        return filesInFolder;
+    }
+
+    public void readTransactions() throws IOException {
+        List<File> files = redaTransactionHistoryFileList();
+        for (File file : files) {
+            redFile(file);
+            System.out.print("The file:[" + file.getName() + "] has been loaded.\n");
         }
-        for (int i = 0; i < args.length; i++) {
-            Path path = Paths.get(args[i]);
-            if (Files.notExists(path)) {
-                System.out.print("File:["+args[i]+"] do not exists\n");
-                return;
-            }
-        }
-        ReadFileLineByLineUsingBufferedReader reader = new ReadFileLineByLineUsingBufferedReader();
-        for (int i = 0; i < args.length; i++) {
-            reader.redFile(args[i]);
-            System.out.print("The file:["+args[i]+"] has been loaded.\n");
-        }
-        reader.writeToTsv(reader.outputFileName);
-        System.out.print("The output file:["+reader.outputFileName+"] has been created.\n");
     }
 
     private void writeToTsv(String outputFileName) {
@@ -89,7 +83,7 @@ public class ReadFileLineByLineUsingBufferedReader {
         }
     }
 
-    public void redFile(String fileName) {
+    public void redFile(File fileName) {
         BufferedReader reader;
         Pattern numberPattern = Pattern.compile("\\d+");
         boolean started = false;
