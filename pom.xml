@@ -27,7 +27,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>com.omnia.nn.read.txt.file.TransactionHistoryService</mainClass>
+                            <mainClass>com.omnia.nn.read.txt.file.MainClass</mainClass>
                         </manifest>
                     </archive>
                     <descriptorRefs>

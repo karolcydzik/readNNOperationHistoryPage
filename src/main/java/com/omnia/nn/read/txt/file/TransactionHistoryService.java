@@ -11,20 +11,19 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import com.omnia.nn.entities.NnRecord;
 import org.apache.commons.lang3.StringUtils;
 
 public class TransactionHistoryService {
 
-    private static final String FILE_HEADER ="Data zlecenia\tData wyceny\tNazwa funduszu\tTyp transakcji\tStatus\tKwota\tKwota jednostka\tWartosc po transakcji\tWpt jednostka";
+    private static final String FILE_HEADER ="Data zlecenia\tData wyceny\tNazwa funduszu\tTyp transakcji\tStatus\tKwota\tKwota jednostka\tWartosc po transakcji\tCena daty zlecenia\tCena daty wyceny";
     private static final String TAB_DELIMITER = "\t";
     private static final String NEW_LINE_SEPARATOR = "\n";
-    private static final String TRANSACTIONS_HISTORY_PATH = "/home/karolcydzik/IdeaProjects/readNNOperationHistoryPage/src/main/resources/transactionsHistory";
+    private static final String TRANSACTIONS_HISTORY_PATH = "./src/main/resources/transactionsHistory";
 
     private String fileNameA = "/home/karolcydzik/IdeaProjects/readNNOperationHistoryPage/src/main/resources/NNTFI24A.html";
     private String fileNameB = "/home/karolcydzik/IdeaProjects/readNNOperationHistoryPage/src/main/resources/NNTFI24B.html";
     private String outputFileName = "results/outputFile.tsv";
-
-    private List<NnRecord> transactions = new ArrayList<>();
 
     private List<File> redaTransactionHistoryFileList() throws IOException {
         List<File> filesInFolder = Files.walk(Paths.get(TRANSACTIONS_HISTORY_PATH))
@@ -34,15 +33,17 @@ public class TransactionHistoryService {
         return filesInFolder;
     }
 
-    public void readTransactions() throws IOException {
+    public List<NnRecord> readTransactions() throws IOException {
+        List<NnRecord> transactions = new ArrayList<>();
         List<File> files = redaTransactionHistoryFileList();
         for (File file : files) {
-            redFile(file);
+            redFile(file, transactions);
             System.out.print("The file:[" + file.getName() + "] has been loaded.\n");
         }
+        return transactions;
     }
 
-    private void writeToTsv(String outputFileName) {
+    public void writeToTsv(String outputFileName, List<NnRecord> transactions) {
         try {
             FileWriter fw = new FileWriter(outputFileName);
             fw.append(FILE_HEADER.toString());
@@ -63,11 +64,13 @@ public class TransactionHistoryService {
                 sb.append(TAB_DELIMITER);
                 sb.append(nnRecord.getKwota());
                 sb.append(TAB_DELIMITER);
-                sb.append(nnRecord.getKwotaJednostka());
+                sb.append(nnRecord.getJednostka());
                 sb.append(TAB_DELIMITER);
                 sb.append(nnRecord.getWartoscRejestru());
                 sb.append(TAB_DELIMITER);
-                sb.append(nnRecord.getWartoscRejestruJednostka());
+                sb.append(nnRecord.getCenaDatyZlecenia());
+                sb.append(TAB_DELIMITER);
+                sb.append(nnRecord.getCenaDatyWyceny());
                 sb.append(NEW_LINE_SEPARATOR);
                 try {
                     fw.append(sb.toString());
@@ -83,7 +86,7 @@ public class TransactionHistoryService {
         }
     }
 
-    public void redFile(File fileName) {
+    private void redFile(File fileName, List<NnRecord> transactions) {
         BufferedReader reader;
         Pattern numberPattern = Pattern.compile("\\d+");
         boolean started = false;
@@ -123,15 +126,14 @@ public class TransactionHistoryService {
                         kwota = kwota.replaceAll("&nbsp;","");
                         kwota = kwota.replaceAll(",",".");
                         int space = kwota.indexOf(" ");
-                        nnRecord.setKwota(kwota.substring(0,space));
-                        nnRecord.setKwotaJednostka(kwota.substring(space+1));
+                        nnRecord.setKwota(new Float(kwota.substring(0,space)));
+                        nnRecord.setJednostka(kwota.substring(space+1));
                     } else if (line.indexOf("registry-value") > 0) {
                         String kwota = StringUtils.substringBetween(line, ">", "<");
                         kwota = kwota.replaceAll("&nbsp;","");
                         kwota = kwota.replaceAll(",",".");
                         int space = kwota.indexOf(" ");
-                        nnRecord.setWartoscRejestru(kwota.substring(0, space));
-                        nnRecord.setWartoscRejestruJednostka(kwota.substring(space+1));
+                        nnRecord.setWartoscRejestru(new Float(kwota.substring(0, space)));
                         transactions.add(nnRecord);
                         nnRecord = new NnRecord();
                     }

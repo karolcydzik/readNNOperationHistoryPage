@@ -1,4 +1,4 @@
-package com.omnia.nn.read.txt.file;
+package com.omnia.nn.entities;
 
 public class NnRecord {
     private String dataZlecenia;
@@ -6,10 +6,11 @@ public class NnRecord {
     private String nazwaFunduszu;
     private String typTransakcji;
     private String status;
-    private String kwota;
-    private String KwotaJednostka;
-    private String wartoscRejestru;
-    private String wartoscRejestruJednostka;
+    private Float kwota;
+    private String jednostka;
+    private Float wartoscRejestru;
+    private Float cenaDatyZlecenia;
+    private Float cenaDatyWyceny;
 
     public String getDataZlecenia() {
         return dataZlecenia;
@@ -51,35 +52,43 @@ public class NnRecord {
         this.status = status;
     }
 
-    public String getKwota() {
+    public Float getKwota() {
         return kwota;
     }
 
-    public void setKwota(String kwota) {
+    public void setKwota(Float kwota) {
         this.kwota = kwota;
     }
 
-    public String getKwotaJednostka() {
-        return KwotaJednostka;
+    public String getJednostka() {
+        return jednostka;
     }
 
-    public void setKwotaJednostka(String kwotaJednostka) {
-        KwotaJednostka = kwotaJednostka;
+    public void setJednostka(String jednostka) {
+        this.jednostka = jednostka;
     }
 
-    public String getWartoscRejestru() {
+    public Float getWartoscRejestru() {
         return wartoscRejestru;
     }
 
-    public void setWartoscRejestru(String wartoscRejestru) {
+    public void setWartoscRejestru(Float wartoscRejestru) {
         this.wartoscRejestru = wartoscRejestru;
     }
 
-    public String getWartoscRejestruJednostka() {
-        return wartoscRejestruJednostka;
+    public Float getCenaDatyZlecenia() {
+        return cenaDatyZlecenia;
     }
 
-    public void setWartoscRejestruJednostka(String wartoscRejestruJednostka) {
-        this.wartoscRejestruJednostka = wartoscRejestruJednostka;
+    public void setCenaDatyZlecenia(Float cenaDatyZlecenia) {
+        this.cenaDatyZlecenia = cenaDatyZlecenia;
+    }
+
+    public Float getCenaDatyWyceny() {
+        return cenaDatyWyceny;
+    }
+
+    public void setCenaDatyWyceny(Float cenaDatyWyceny) {
+        this.cenaDatyWyceny = cenaDatyWyceny;
     }
 }
