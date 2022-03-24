@@ -28,7 +28,7 @@ public class ChangeDownloadDirOfFirefox {
     public static void main(String[] args) throws IOException {
         ChangeDownloadDirOfFirefox downloadDirOfFirefox = new ChangeDownloadDirOfFirefox();
         //downloadDirOfFirefox.downloadAllSecurities(47);
-        downloadDirOfFirefox.downloadAllSecurities(7);
+        downloadDirOfFirefox.downloadAllSecurities(47);
     }
 
     public void downloadAllSecurities(int maxSec) {
@@ -76,7 +76,7 @@ public class ChangeDownloadDirOfFirefox {
         }
         boolean notReaded = true;
         int counter = 0;
-        while(notReaded && counter<5) {
+        while (notReaded && counter < 5) {
             new Actions(driver).sendKeys(Keys.PAGE_DOWN).perform();
             try {
                 try {
@@ -92,37 +92,31 @@ public class ChangeDownloadDirOfFirefox {
                     new Actions(driver).sendKeys(CTRL_HOME).perform();
                 }
                 counter++;
-            } catch (Exception ec){
+            } catch (Exception ec) {
             }
         }
         System.out.println("The file should be downloaded from ");
     }
 
-    private boolean enterSecurityPage(int i) {
+    private void enterSecurityPage(int i) {
         try {
             driver.switchTo().window(mainWindowIndex);
         } catch (IndexOutOfBoundsException windowWithIndexNotFound) {
             System.out.println("The main window has not been reached.");
-            return false;
+            return;
         }
         String security = prefix + i + suffix;
-        (new WebDriverWait(driver, 30)).until(new ExpectedCondition<Boolean>() {
-            public Boolean apply(WebDriver d) {
-                return d.findElement(By.xpath(security)).isDisplayed();
-
-            }
-        });
         new Actions(driver).sendKeys(CTRL_HOME).perform();
-        WebElement element = driver.findElement(By.xpath(security));
         for (int j = 0; j < 10; j++) {
-            try {
-                element.sendKeys(CTRL_RETURN);
-                return true;
-            } catch (Exception e) {
-                System.out.println("try[" + i + "/" + j + "]");
+            WebElement element = driver.findElement(By.xpath(security));
+            if (element.isDisplayed() && element.isEnabled()) {
+                element.sendKeys(CTRL_RETURN);;
+                return;
+            } else {
+                element.sendKeys(Keys.PAGE_DOWN);
             }
         }
-        return false;
+        return;
     }
 
     private void initDriver() {
