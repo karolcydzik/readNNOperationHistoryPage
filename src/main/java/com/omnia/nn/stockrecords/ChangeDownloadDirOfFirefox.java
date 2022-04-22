@@ -2,14 +2,11 @@ package com.omnia.nn.stockrecords;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.firefox.FirefoxProfile;
 import org.openqa.selenium.interactions.Actions;
-import org.openqa.selenium.support.ui.ExpectedCondition;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -27,7 +24,6 @@ public class ChangeDownloadDirOfFirefox {
 
     public static void main(String[] args) throws IOException {
         ChangeDownloadDirOfFirefox downloadDirOfFirefox = new ChangeDownloadDirOfFirefox();
-        //downloadDirOfFirefox.downloadAllSecurities(47);
         downloadDirOfFirefox.downloadAllSecurities(47);
     }
 
@@ -52,8 +48,7 @@ public class ChangeDownloadDirOfFirefox {
                 isFirst = false;
                 closeTab(tabId);
             } else {
-                downloadSecurity(tabId);
-            }
+                downloadSecurity(tabId);}
         }
     }
 
