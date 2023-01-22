@@ -2,7 +2,11 @@ package com.omnia.nn.stockrecords;
 
 import org.junit.Test;
 
-class ReFormatTxtTest {
+public class ReFormatTxtTest {
+
+    public ReFormatTxtTest(){
+
+    }
 
     ReFormatTxt reFormatTxt = new ReFormatTxt();
 

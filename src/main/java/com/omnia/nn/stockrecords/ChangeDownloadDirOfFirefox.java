@@ -1,5 +1,6 @@
 package com.omnia.nn.stockrecords;
 
+import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
@@ -19,8 +20,9 @@ public class ChangeDownloadDirOfFirefox {
     private String mainWindowIndex = null;
     private String CTRL_RETURN = Keys.chord(Keys.CONTROL, Keys.RETURN);
     private String CTRL_HOME = Keys.chord(Keys.CONTROL, Keys.HOME);
-    private static String prefix = "/html/body/div[2]/div[2]/div[1]/div[5]/div/div/div/div[1]/div/div[1]/div/div/div/div[4]/div/table/tbody/tr[";
+    private static String prefix = "/html/body/div[2]/div[2]/div[1]/div[4]/div/div/div/div[1]/div/div[1]/div/div/div/div[4]/div/table/tbody/tr[";
     private static String suffix = "]/td[2]/a";
+    private static String suffixAw = "]/td[4]/img";
 
     public static void main(String[] args) throws IOException {
         ChangeDownloadDirOfFirefox downloadDirOfFirefox = new ChangeDownloadDirOfFirefox();
@@ -43,12 +45,15 @@ public class ChangeDownloadDirOfFirefox {
     private void downloadSecurities() {
         List<String> windowHandles = new ArrayList<>(driver.getWindowHandles());
         boolean isFirst = true;
+        int counter = 0;
         for (String tabId : windowHandles) {
+            counter++;
             if (isFirst) {
                 isFirst = false;
                 closeTab(tabId);
             } else {
-                downloadSecurity(tabId);}
+                downloadSecurity(tabId, counter);
+            }
         }
     }
 
@@ -61,7 +66,7 @@ public class ChangeDownloadDirOfFirefox {
         driver.close();
     }
 
-    private void downloadSecurity(String tabId) {
+    private void downloadSecurity(String tabId, int countGr) {
         String linkDownload = "Zapisz wycenę do pliku";
         try {
             driver.switchTo().window(tabId);
@@ -69,20 +74,23 @@ public class ChangeDownloadDirOfFirefox {
             System.out.println("The current window has not been reached.");
             return;
         }
-        boolean notReaded = true;
         int counter = 0;
-        while (notReaded && counter < 5) {
+        while (counter < 5) {
             new Actions(driver).sendKeys(Keys.PAGE_DOWN).perform();
             try {
                 try {
                     WebElement element = driver.findElement(By.linkText(linkDownload));
                     element.click();
-                    notReaded = false;
                     driver.close();
+                    System.out.println("Counter =[" + countGr + "]. The file has been downloaded. TabId=[" + tabId + "]");
+                    TimeUnit.SECONDS.sleep(1);
+                    return;
                 } catch (Exception ex) {
                     try {
-                        TimeUnit.SECONDS.sleep(5);
+                        TimeUnit.SECONDS.sleep(1);
                     } catch (InterruptedException e) {
+                        System.out.println("!!!! System error. Counter =[], tabId=[" + tabId + "].");
+                        System.out.println(e.toString());
                     }
                     new Actions(driver).sendKeys(CTRL_HOME).perform();
                 }
@@ -90,7 +98,7 @@ public class ChangeDownloadDirOfFirefox {
             } catch (Exception ec) {
             }
         }
-        System.out.println("The file should be downloaded from ");
+        System.out.println("The file has !!!!! Not !!!! been downloaded. TabId=[" + tabId + "], counter =[" + countGr + "]");
     }
 
     private void enterSecurityPage(int i) {
@@ -101,14 +109,24 @@ public class ChangeDownloadDirOfFirefox {
             return;
         }
         String security = prefix + i + suffix;
+        String availableIndicator = prefix + i + suffixAw;
         new Actions(driver).sendKeys(CTRL_HOME).perform();
         for (int j = 0; j < 10; j++) {
-            WebElement element = driver.findElement(By.xpath(security));
-            if (element.isDisplayed() && element.isEnabled()) {
-                element.sendKeys(CTRL_RETURN);;
+            try {
+                TimeUnit.SECONDS.sleep(1);
+            } catch (InterruptedException e) {
+            }
+            WebElement availableInd = driver.findElement(By.xpath(availableIndicator));
+            if (availableInd.isEnabled() & availableInd.isDisplayed()) {
+                String title = availableInd.getAttribute("title");
+                if (!StringUtils.equals(title, "ING Konto Funduszowe SFIO (tylko w ING Bank)")) {
+                    WebElement element = driver.findElement(By.xpath(security));
+                    element.sendKeys(CTRL_RETURN);
+
+                }
                 return;
             } else {
-                element.sendKeys(Keys.PAGE_DOWN);
+                availableInd.sendKeys(Keys.PAGE_DOWN);
             }
         }
         return;
