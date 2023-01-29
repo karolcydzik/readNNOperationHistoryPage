@@ -6,7 +6,6 @@ import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
-import org.openqa.selenium.firefox.FirefoxProfile;
 import org.openqa.selenium.interactions.Actions;
 
 import java.io.IOException;
@@ -16,6 +15,7 @@ import java.util.concurrent.TimeUnit;
 
 public class ChangeDownloadDirOfFirefox {
 
+    private String linkDownload = "Zapisz wycenę do pliku";
     private FirefoxDriver driver = null;
     private String mainWindowIndex = null;
     private String CTRL_RETURN = Keys.chord(Keys.CONTROL, Keys.RETURN);
@@ -23,14 +23,18 @@ public class ChangeDownloadDirOfFirefox {
     private static String prefix = "/html/body/div[2]/div[2]/div[1]/div[4]/div/div/div/div[1]/div/div[1]/div/div/div/div[4]/div/table/tbody/tr[";
     private static String suffix = "]/td[2]/a";
     private static String suffixAw = "]/td[4]/img";
+    private static int nrOfShares = 47;
 
     public static void main(String[] args) throws IOException {
         ChangeDownloadDirOfFirefox downloadDirOfFirefox = new ChangeDownloadDirOfFirefox();
-        downloadDirOfFirefox.downloadAllSecurities(47);
+        downloadDirOfFirefox.downloadAllSecurities(nrOfShares);
     }
 
     public void downloadAllSecurities(int maxSec) {
         initDriver();
+        if (!loadMainPage()) {
+            return;
+        }
         for (int i = 1; i <= maxSec; i++) {
             try {
                 enterSecurityPage(i);
@@ -57,6 +61,21 @@ public class ChangeDownloadDirOfFirefox {
         }
     }
 
+    private boolean loadMainPage() {
+        WebElement element = driver.findElement(By.linkText(linkDownload));
+        for (int i = 0; i < 5; i++) {
+            if (element.isEnabled() && element.isDisplayed()) {
+                return true;
+            }
+            try {
+                TimeUnit.SECONDS.sleep(2l);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        return false;
+    }
+
     private void closeTab(String tabId) {
         try {
             driver.switchTo().window(tabId);
@@ -67,7 +86,6 @@ public class ChangeDownloadDirOfFirefox {
     }
 
     private void downloadSecurity(String tabId, int countGr) {
-        String linkDownload = "Zapisz wycenę do pliku";
         try {
             driver.switchTo().window(tabId);
         } catch (IndexOutOfBoundsException windowWithIndexNotFound) {
@@ -80,11 +98,15 @@ public class ChangeDownloadDirOfFirefox {
             try {
                 try {
                     WebElement element = driver.findElement(By.linkText(linkDownload));
-                    element.click();
-                    driver.close();
-                    System.out.println("Counter =[" + countGr + "]. The file has been downloaded. TabId=[" + tabId + "]");
-                    TimeUnit.SECONDS.sleep(1);
-                    return;
+                    if (element.isEnabled() && element.isDisplayed()) {
+                        element.click();
+                        TimeUnit.SECONDS.sleep(1);
+                        driver.close();
+                        System.out.println("Counter =[" + countGr + "]. The file has been downloaded. TabId=[" + tabId + "]");
+                        return;
+                    } else {
+                        if (counter == 0) element.sendKeys(Keys.PAGE_DOWN);
+                    }
                 } catch (Exception ex) {
                     try {
                         TimeUnit.SECONDS.sleep(1);
@@ -136,27 +158,12 @@ public class ChangeDownloadDirOfFirefox {
         // Setting Firefox driver path
         System.setProperty("webdriver.gecko.driver", "C:\\Users\\48602\\IdeaProjects\\readNNOperationHistoryPage\\src\\main\\resources\\gecodriver\\geckodriver.exe");
 
-        // Creating firefox profile
-        FirefoxProfile profile = new FirefoxProfile();
-
-        // Instructing firefox to use custom download location
-        profile.setPreference("browser.download.folderList", 2);
-
-        // Setting custom download directory
-        profile.setPreference("browser.download.dir", "C:\\tmp");
-
-        // Skipping Save As dialog box for types of files with their MIME
-        profile.setPreference("browser.helperApps.neverAsk.saveToDisk",
-                "text/csv,application/java-archive, application/x-msexcel,application/excel,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/x-excel,application/vnd.ms-excel,image/png,image/jpeg,text/html,text/plain,application/msword,application/xml,application/vnd.microsoft.portable-executable");
-
         // Creating FirefoxOptions to set profile
         FirefoxOptions options = new FirefoxOptions();
-        options.setProfile(profile);
         options.addPreference("browser.download.folderList", 2);
         options.addPreference("browser.download.dir", "C:\\tmp");
         options.addPreference("browser.download.useDownloadDir", true);
         options.addPreference("browser.download.viewableInternally.enabledTypes", "");
-        //options.addPreference("browser.helperApps.neverAsk.saveToDisk", "text/csv");
         options.addPreference("browser.helperApps.neverAsk.saveToDisk", "application/pdf;text/plain;application/text;text/xml;application/xml");
 
         // Launching browser with desired capabilities
