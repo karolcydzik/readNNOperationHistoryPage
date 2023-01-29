@@ -8,6 +8,7 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.interactions.Actions;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -161,7 +162,7 @@ public class ChangeDownloadDirOfFirefox {
         // Creating FirefoxOptions to set profile
         FirefoxOptions options = new FirefoxOptions();
         options.addPreference("browser.download.folderList", 2);
-        options.addPreference("browser.download.dir", "C:\\tmp");
+        options.addPreference("browser.download.dir", getQuotesPath());
         options.addPreference("browser.download.useDownloadDir", true);
         options.addPreference("browser.download.viewableInternally.enabledTypes", "");
         options.addPreference("browser.helperApps.neverAsk.saveToDisk", "application/pdf;text/plain;application/text;text/xml;application/xml");
@@ -173,5 +174,10 @@ public class ChangeDownloadDirOfFirefox {
         driver.manage().window().maximize();
         List<String> windowHandles = new ArrayList<>(driver.getWindowHandles());
         mainWindowIndex = windowHandles.get(0);
+    }
+
+    private String getQuotesPath(){
+        File resourcesDirectory = new File("src/main/resources/quotes");
+        return resourcesDirectory.getAbsolutePath();
     }
 }
