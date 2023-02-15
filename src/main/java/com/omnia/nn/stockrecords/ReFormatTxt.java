@@ -18,8 +18,7 @@ public class ReFormatTxt {
         for (File file:inFiles){
             String fileName = file.getName();
             try {
-                String outPath = outDir+"\\"+fileName;
-                PrintWriter writer = new PrintWriter(outPath, "UTF-8");
+                PrintWriter writer = new PrintWriter(outDir+fileName, "UTF-8");
                 reformatFile(file, writer);
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
@@ -50,7 +49,6 @@ public class ReFormatTxt {
                 String resultStr = prefix + line;
                 writer.println(resultStr);
             }
-            writer.close();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {

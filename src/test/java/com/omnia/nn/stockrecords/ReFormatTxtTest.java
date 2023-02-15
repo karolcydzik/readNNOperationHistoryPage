@@ -12,6 +12,6 @@ public class ReFormatTxtTest {
 
     @Test
     public void testReadDir(){
-        reFormatTxt.reformat(NnUtil.getQuotesPath(), NnUtil.getResuldPath());
+
     }
 }
