@@ -1,5 +1,6 @@
 package com.omnia.nn.stockrecords;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
@@ -33,6 +34,11 @@ public class ChangeDownloadDirOfFirefox {
 
     public void downloadAllSecurities(int maxSec) {
         initDriver();
+        try {
+            FileUtils.cleanDirectory(new File(NnUtil.getQuotesPath()));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         if (!loadMainPage()) {
             return;
         }
@@ -101,7 +107,7 @@ public class ChangeDownloadDirOfFirefox {
                     WebElement element = driver.findElement(By.linkText(linkDownload));
                     if (element.isEnabled() && element.isDisplayed()) {
                         element.click();
-                        TimeUnit.SECONDS.sleep(1);
+                        TimeUnit.SECONDS.sleep(3);
                         driver.close();
                         System.out.println("Counter =[" + countGr + "]. The file has been downloaded. TabId=[" + tabId + "]");
                         return;
@@ -162,7 +168,7 @@ public class ChangeDownloadDirOfFirefox {
         // Creating FirefoxOptions to set profile
         FirefoxOptions options = new FirefoxOptions();
         options.addPreference("browser.download.folderList", 2);
-        options.addPreference("browser.download.dir", getQuotesPath());
+        options.addPreference("browser.download.dir", NnUtil.getQuotesPath());
         options.addPreference("browser.download.useDownloadDir", true);
         options.addPreference("browser.download.viewableInternally.enabledTypes", "");
         options.addPreference("browser.helperApps.neverAsk.saveToDisk", "application/pdf;text/plain;application/text;text/xml;application/xml");
@@ -176,8 +182,4 @@ public class ChangeDownloadDirOfFirefox {
         mainWindowIndex = windowHandles.get(0);
     }
 
-    private String getQuotesPath(){
-        File resourcesDirectory = new File("src/main/resources/quotes");
-        return resourcesDirectory.getAbsolutePath();
-    }
 }
