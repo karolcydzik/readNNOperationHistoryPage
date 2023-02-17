@@ -1,5 +1,7 @@
 package com.omnia.nn.stockrecords;
 
+import org.apache.commons.io.FileUtils;
+
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -32,7 +34,7 @@ public class ReFormatTxt {
     public List<File> readFiles(String dir) {
         List<File> filesInFolder = null;
         try {
-            FileUtils.cleanDirectory(new File(NnUtil.getQuotesPath()));
+            FileUtils.cleanDirectory(new File(NnUtil.getResuldPath()));
         } catch (IOException e) {
             e.printStackTrace();
         }
