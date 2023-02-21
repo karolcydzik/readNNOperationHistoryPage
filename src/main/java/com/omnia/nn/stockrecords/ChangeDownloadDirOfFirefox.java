@@ -100,11 +100,18 @@ public class ChangeDownloadDirOfFirefox {
             return;
         }
         int counter = 0;
+        WebElement cookieInfoClose = driver.findElementByClassName("cookie_info_close");
+        if (cookieInfoClose.isEnabled() && cookieInfoClose.isDisplayed()) {
+            cookieInfoClose.click();
+        }
         while (counter < 5) {
-            new Actions(driver).sendKeys(Keys.PAGE_DOWN).perform();
+            WebElement element = driver.findElement(By.linkText(linkDownload));
+            if (!(element.isEnabled() && element.isDisplayed())) {
+                new Actions(driver).sendKeys(Keys.PAGE_DOWN).perform();
+            }
             try {
                 try {
-                    WebElement element = driver.findElement(By.linkText(linkDownload));
+                    element = driver.findElement(By.linkText(linkDownload));
                     if (element.isEnabled() && element.isDisplayed()) {
                         element.click();
                         TimeUnit.SECONDS.sleep(3);
@@ -115,13 +122,7 @@ public class ChangeDownloadDirOfFirefox {
                         if (counter == 0) element.sendKeys(Keys.PAGE_DOWN);
                     }
                 } catch (Exception ex) {
-                    try {
-                        TimeUnit.SECONDS.sleep(1);
-                    } catch (InterruptedException e) {
-                        System.out.println("!!!! System error. Counter =[], tabId=[" + tabId + "].");
-                        System.out.println(e.toString());
-                    }
-                    new Actions(driver).sendKeys(CTRL_HOME).perform();
+                    new Actions(driver).sendKeys(Keys.ARROW_DOWN).perform();
                 }
                 counter++;
             } catch (Exception ec) {
