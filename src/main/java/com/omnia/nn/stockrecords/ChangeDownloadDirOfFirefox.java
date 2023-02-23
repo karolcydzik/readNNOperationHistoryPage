@@ -17,19 +17,19 @@ import java.util.concurrent.TimeUnit;
 
 public class ChangeDownloadDirOfFirefox {
 
-    private String LINK_DOWNLOAD = "Zapisz wycenę do pliku";
+    private String linkDownload = "Zapisz wycenę do pliku";
     private FirefoxDriver driver = null;
-    private String MAIN_WINDOW_INDEX = null;
+    private String mainWindowIndex = null;
     private String CTRL_RETURN = Keys.chord(Keys.CONTROL, Keys.RETURN);
     private String CTRL_HOME = Keys.chord(Keys.CONTROL, Keys.HOME);
-    private static String PREFIX = "/html/body/div[2]/div[2]/div[1]/div[4]/div/div/div/div[1]/div/div[1]/div/div/div/div[4]/div/table/tbody/tr[";
-    private static String SUFFIX = "]/td[2]/a";
-    private static String SUFFIX_AW = "]/td[4]/img";
-    private static int NR_OF_SHARES = 47;
+    private static String prefix = "/html/body/div[2]/div[2]/div[1]/div[4]/div/div/div/div[1]/div/div[1]/div/div/div/div[4]/div/table/tbody/tr[";
+    private static String suffix = "]/td[2]/a";
+    private static String suffixAw = "]/td[4]/img";
+    private static int nrOfShares = 47;
 
     public static void main(String[] args) throws IOException {
         ChangeDownloadDirOfFirefox downloadDirOfFirefox = new ChangeDownloadDirOfFirefox();
-        downloadDirOfFirefox.downloadAllSecurities(NR_OF_SHARES);
+        downloadDirOfFirefox.downloadAllSecurities(nrOfShares);
     }
 
     public void downloadAllSecurities(int maxSec) {
@@ -69,7 +69,7 @@ public class ChangeDownloadDirOfFirefox {
     }
 
     private boolean loadMainPage() {
-        WebElement element = driver.findElement(By.linkText(LINK_DOWNLOAD));
+        WebElement element = driver.findElement(By.linkText(linkDownload));
         for (int i = 0; i < 5; i++) {
             if (element.isEnabled() && element.isDisplayed()) {
                 return true;
@@ -104,24 +104,14 @@ public class ChangeDownloadDirOfFirefox {
         if (cookieInfoClose.isEnabled() && cookieInfoClose.isDisplayed()) {
             cookieInfoClose.click();
         }
-        /**
-        WebElement weSlider;
-        try {
-            weSlider = driver.findElementByCssSelector(".highcharts-navigator-handle-left");
-            ((JavascriptExecutor) driver).executeScript("arguments[0].setAttribute('transform','translate(10,317)')", weSlider);
-        }catch (Exception ex){
-            String exTxt= ex.toString();
-            System.out.println(exTxt);
-        }
-         **/
         while (counter < 5) {
-            WebElement element = driver.findElement(By.linkText(LINK_DOWNLOAD));
+            WebElement element = driver.findElement(By.linkText(linkDownload));
             if (!(element.isEnabled() && element.isDisplayed())) {
                 new Actions(driver).sendKeys(Keys.PAGE_DOWN).perform();
             }
             try {
                 try {
-                    element = driver.findElement(By.linkText(LINK_DOWNLOAD));
+                    element = driver.findElement(By.linkText(linkDownload));
                     if (element.isEnabled() && element.isDisplayed()) {
                         element.click();
                         TimeUnit.SECONDS.sleep(3);
@@ -143,13 +133,13 @@ public class ChangeDownloadDirOfFirefox {
 
     private void enterSecurityPage(int i) {
         try {
-            driver.switchTo().window(MAIN_WINDOW_INDEX);
+            driver.switchTo().window(mainWindowIndex);
         } catch (IndexOutOfBoundsException windowWithIndexNotFound) {
             System.out.println("The main window has not been reached.");
             return;
         }
-        String security = PREFIX + i + SUFFIX;
-        String availableIndicator = PREFIX + i + SUFFIX_AW;
+        String security = prefix + i + suffix;
+        String availableIndicator = prefix + i + suffixAw;
         new Actions(driver).sendKeys(CTRL_HOME).perform();
         for (int j = 0; j < 10; j++) {
             try {
@@ -173,9 +163,8 @@ public class ChangeDownloadDirOfFirefox {
     }
 
     private void initDriver() {
-        String currDir = System.getProperty("user.dir");
         // Setting Firefox driver path
-        System.setProperty("webdriver.gecko.driver", currDir + "\\src\\main\\resources\\gecodriver\\geckodriver.exe");
+        System.setProperty("webdriver.gecko.driver", "C:\\Users\\48602\\IdeaProjects\\readNNOperationHistoryPage\\src\\main\\resources\\gecodriver\\geckodriver.exe");
 
         // Creating FirefoxOptions to set profile
         FirefoxOptions options = new FirefoxOptions();
@@ -191,7 +180,7 @@ public class ChangeDownloadDirOfFirefox {
         driver.get("https://www.nntfi.pl/notowania");
         driver.manage().window().maximize();
         List<String> windowHandles = new ArrayList<>(driver.getWindowHandles());
-        MAIN_WINDOW_INDEX = windowHandles.get(0);
+        mainWindowIndex = windowHandles.get(0);
     }
 
 }
