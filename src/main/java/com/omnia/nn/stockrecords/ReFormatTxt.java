@@ -54,7 +54,7 @@ public class ReFormatTxt {
             String prefix = getPrefix(br.readLine());
             String line;
             while ((line = br.readLine()) != null) {
-                String resultStr = prefix + line;
+                String resultStr = prefix + line.replaceAll("-", "");
                 writer.println(resultStr);
             }
             writer.close();
