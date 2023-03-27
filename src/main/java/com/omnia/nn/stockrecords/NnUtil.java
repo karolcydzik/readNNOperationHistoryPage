@@ -14,4 +14,9 @@ public class NnUtil {
         return resourcesDirectory.getAbsolutePath();
     }
 
+    public static String getFullPath(String dir){
+        File resourcesDirectory = new File("src/main/resources/"+dir);
+        return resourcesDirectory.getAbsolutePath();
+    }
+
 }
