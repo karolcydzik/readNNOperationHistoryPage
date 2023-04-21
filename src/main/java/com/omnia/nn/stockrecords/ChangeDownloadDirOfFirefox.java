@@ -114,7 +114,7 @@ public class ChangeDownloadDirOfFirefox {
                     element = driver.findElement(By.linkText(linkDownload));
                     if (element.isEnabled() && element.isDisplayed()) {
                         element.click();
-                        TimeUnit.SECONDS.sleep(3);
+                        TimeUnit.SECONDS.sleep(2);
                         driver.close();
                         System.out.println("Counter =[" + countGr + "]. The file has been downloaded. TabId=[" + tabId + "]");
                         return;
